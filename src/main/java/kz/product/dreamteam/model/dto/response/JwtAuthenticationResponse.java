@@ -1,4 +1,4 @@
-package kz.product.dreamteam.model.dto;
+package kz.product.dreamteam.model.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

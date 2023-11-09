@@ -1,6 +1,6 @@
 package kz.product.dreamteam.utils;
 
-import kz.product.dreamteam.model.dto.SignUpRequest;
+import kz.product.dreamteam.model.dto.request.SignUpRequest;
 
 import java.time.LocalDate;
 import java.time.Period;
