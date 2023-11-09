@@ -25,4 +25,7 @@ public class Product {
     private String description;
     private String category;
     private BigDecimal price;
+    private Boolean isDeleted;
+    private Integer views;
+    private Integer likes;
 }
