@@ -31,7 +31,7 @@ public class AccountFacadeImpl implements AccountFacade {
 
     @Override
     public UserDTO getUserAccount() {
-        return ModelMapperUtil.map(redisService.getUser(), UserDTO.class);
+        return ModelMapperUtil.map(service.getUser(), UserDTO.class);
     }
 
     @Override

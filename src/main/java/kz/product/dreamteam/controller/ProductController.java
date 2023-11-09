@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,6 +17,7 @@ public class ProductController {
 
     private final ProductFacade facade;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<ProductDTO> save(@RequestBody ProductSaveDTO productSaveDTO) {
         return new ResponseEntity<>(facade.saveProduct(productSaveDTO), HttpStatus.CREATED);
@@ -26,11 +28,13 @@ public class ProductController {
         return ResponseEntity.ok(facade.getProduct(id));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/edit/{id}")
     public ResponseEntity<ProductDTO> edit(@PathVariable("id") ObjectId id, @RequestBody ProductSaveDTO productSaveDTO) {
         return ResponseEntity.ok(facade.editProduct(id, productSaveDTO));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ProductDTO> delete(@PathVariable("id") ObjectId id) {
         facade.deleteProduct(id);
