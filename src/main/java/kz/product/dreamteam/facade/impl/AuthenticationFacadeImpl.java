@@ -31,7 +31,6 @@ public class AuthenticationFacadeImpl implements AuthenticationFacade {
     private final UserService service;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
 
     @Override
     public UserDTO signUpUser(SignUpRequest signUpRequest) {
@@ -43,6 +42,7 @@ public class AuthenticationFacadeImpl implements AuthenticationFacade {
                 .email(signUpRequest.getEmail())
                 .password(bCryptPasswordEncoder.encode(signUpRequest.getPassword()))
                 .role(Role.USER)
+                .isDeleted(false)
                 .build();
         return ModelMapperUtil.map(service.save(savedUser), UserDTO.class);
     }

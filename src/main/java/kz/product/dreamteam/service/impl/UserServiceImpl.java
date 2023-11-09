@@ -4,6 +4,8 @@ import kz.product.dreamteam.model.entity.User;
 import kz.product.dreamteam.repository.UserRepository;
 import kz.product.dreamteam.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public User save(User user) {
         return repository.save(user);
+    }
+
+    @Override
+    public User getUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (User) authentication.getPrincipal();
     }
 
     @Override

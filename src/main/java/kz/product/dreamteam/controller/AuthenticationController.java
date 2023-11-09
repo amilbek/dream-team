@@ -5,7 +5,6 @@ import kz.product.dreamteam.model.dto.JwtAuthenticationResponse;
 import kz.product.dreamteam.model.dto.SignInRequest;
 import kz.product.dreamteam.model.dto.SignUpRequest;
 import kz.product.dreamteam.model.dto.UserDTO;
-import kz.product.dreamteam.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -19,15 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthenticationController {
 
-    private final AuthenticationFacade authenticationFacade;
+    private final AuthenticationFacade facade;
 
     @PostMapping("/sign-up")
     public ResponseEntity<UserDTO> signup(@Validated @RequestBody SignUpRequest request) {
-        return ResponseEntity.ok(authenticationFacade.signUpUser(request));
+        return ResponseEntity.ok(facade.signUpUser(request));
     }
 
     @PostMapping("/sign-in")
     public ResponseEntity<JwtAuthenticationResponse> signIn(@Validated @RequestBody SignInRequest request) {
-        return ResponseEntity.ok(authenticationFacade.signInUser(request));
+        return ResponseEntity.ok(facade.signInUser(request));
     }
 }

@@ -7,6 +7,8 @@ public interface UserService {
 
     User save(User user);
 
+    User getUser();
+
     boolean existsUserByEmail(String email);
 
     UserDetailsService userDetailsService();
