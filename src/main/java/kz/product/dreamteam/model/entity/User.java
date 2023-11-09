@@ -22,7 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "users")
-public class UserEntity implements UserDetails {
+public class User implements UserDetails {
 
     @Id
     private ObjectId id;
