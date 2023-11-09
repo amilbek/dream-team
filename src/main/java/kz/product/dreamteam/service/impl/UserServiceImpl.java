@@ -29,18 +29,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean existsUserByEmail(String email) {
-        return !repository.existsByEmail(email);
+        return repository.existsByEmail(email);
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        return repository.findUserByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     @Override
     public UserDetailsService userDetailsService() {
         return username -> repository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-    }
-
-    @Override
-    public UserDetailsService getUserDetailsByEmail(String email) {
-        return username -> repository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }

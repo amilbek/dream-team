@@ -11,7 +11,7 @@ public interface UserService {
 
     boolean existsUserByEmail(String email);
 
-    UserDetailsService userDetailsService();
+    User getUserByEmail(String email);
 
-    UserDetailsService getUserDetailsByEmail(String email);
+    UserDetailsService userDetailsService();
 }

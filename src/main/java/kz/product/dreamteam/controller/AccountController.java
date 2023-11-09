@@ -1,5 +1,7 @@
 package kz.product.dreamteam.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import kz.product.dreamteam.facade.AccountFacade;
 import kz.product.dreamteam.model.dto.UserDTO;
 import kz.product.dreamteam.model.dto.UserUpdateDTO;
@@ -9,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static kz.product.dreamteam.constants.CommonConstants.ACCOUNT_DELETED;
+import static kz.product.dreamteam.constants.CommonConstants.LOG_OUT;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,9 +30,15 @@ public class AccountController {
         return ResponseEntity.ok(accountFacade.updateUserAccount(userUpdateDTO));
     }
 
-    @GetMapping("/delete-user")
-    public ResponseEntity<?> deleteUserAccount() {
+    @DeleteMapping("/delete-user")
+    public ResponseEntity<Object> deleteUserAccount() {
         accountFacade.deleteUserAccount();
         return ResponseEntity.ok(ACCOUNT_DELETED);
+    }
+
+    @GetMapping("/sign-out")
+    public ResponseEntity<Object> signOut(HttpServletRequest request, HttpServletResponse response) {
+        accountFacade.logOut(request, response);
+        return ResponseEntity.ok(LOG_OUT);
     }
 }
