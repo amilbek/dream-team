@@ -28,6 +28,4 @@ public class OrderPosition {
     private Product product;
 
     private Integer count;
-
-    private LocalDateTime createdAt;
 }

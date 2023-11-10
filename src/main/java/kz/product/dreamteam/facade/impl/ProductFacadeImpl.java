@@ -4,7 +4,10 @@ import kz.product.dreamteam.facade.ProductFacade;
 import kz.product.dreamteam.model.dto.ProductDTO;
 import kz.product.dreamteam.model.dto.ProductSaveDTO;
 import kz.product.dreamteam.model.entity.Product;
+import kz.product.dreamteam.model.entity.User;
+import kz.product.dreamteam.model.entity.enums.Role;
 import kz.product.dreamteam.service.ProductService;
+import kz.product.dreamteam.service.UserService;
 import kz.product.dreamteam.utils.ModelMapperUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class ProductFacadeImpl implements ProductFacade {
 
     private final ProductService service;
+    private final UserService userService;
 
     @Override
     public ProductDTO saveProduct(ProductSaveDTO productSaveDTO) {
@@ -29,8 +33,11 @@ public class ProductFacadeImpl implements ProductFacade {
 
     @Override
     public ProductDTO getProduct(ObjectId id) {
+        User user = userService.getUser();
         Product product = service.getProduct(id);
-        product.setViews(product.getViews() + 1);
+        if (user.getRole().equals(Role.USER)) {
+            product.setViews(product.getViews() + 1);
+        }
         Product savedProduct = service.save(product);
         return ModelMapperUtil.map(savedProduct, ProductDTO.class);
     }

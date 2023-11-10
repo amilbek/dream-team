@@ -59,10 +59,10 @@ public class AccountFacadeImpl implements AccountFacade {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = service.getUser();
         SecurityContextLogoutHandler ctxLogOut = new SecurityContextLogoutHandler();
-        if (user == null) {
+        if (user != null) {
             ctxLogOut.logout(request, response, auth);
+            redisService.deleteUserFromCache(user);
         }
-        redisService.deleteUserFromCache(user);
     }
 
     private void checkUserUpdateValidations(User user, UserUpdateDTO userUpdateDTO) {

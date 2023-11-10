@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +37,7 @@ public class OrderFacadeImpl implements OrderFacade {
                 .user(user)
                 .build();
         order.setUser(user);
+        order.setCreatedAt(LocalDateTime.now());
         return ModelMapperUtil.map(service.makeOrder(order), OrderDTO.class);
     }
 
