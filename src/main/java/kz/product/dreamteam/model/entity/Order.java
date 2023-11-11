@@ -1,6 +1,7 @@
 package kz.product.dreamteam.model.entity;
 
 import jakarta.persistence.*;
+import kz.product.dreamteam.model.entity.enums.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,6 +29,6 @@ public class Order {
     private BigDecimal totalSum;
     @OneToOne
     private User user;
-
+    private OrderStatus orderStatus;
     private LocalDateTime createdAt;
 }

@@ -62,8 +62,11 @@ public class ProductFacadeImpl implements ProductFacade {
 
     @Override
     public ProductDTO likeProduct(ObjectId id) {
+        User user = userService.getUser();
         Product product = service.getProduct(id);
-        product.setLikes(product.getLikes() + 1);
+        if (user.getRole().equals(Role.USER)) {
+            product.setLikes(product.getLikes() + 1);
+        }
         Product savedProduct = service.save(product);
         return ModelMapperUtil.map(savedProduct, ProductDTO.class);
     }

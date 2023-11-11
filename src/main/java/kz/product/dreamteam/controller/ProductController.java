@@ -36,8 +36,14 @@ public class ProductController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ProductDTO> delete(@PathVariable("id") ObjectId id) {
+    public ResponseEntity<Object> delete(@PathVariable("id") ObjectId id) {
         facade.deleteProduct(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/like/{id}")
+    public ResponseEntity<ProductDTO> like(@PathVariable("id") ObjectId id) {
+        return ResponseEntity.ok(facade.likeProduct(id));
     }
 }

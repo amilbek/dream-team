@@ -8,16 +8,17 @@ import kz.product.dreamteam.model.entity.Order;
 import kz.product.dreamteam.model.entity.OrderPosition;
 import kz.product.dreamteam.model.entity.Product;
 import kz.product.dreamteam.model.entity.User;
+import kz.product.dreamteam.model.entity.enums.OrderStatus;
 import kz.product.dreamteam.service.OrderService;
 import kz.product.dreamteam.service.ProductService;
 import kz.product.dreamteam.service.UserService;
 import kz.product.dreamteam.utils.ModelMapperUtil;
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,16 +29,24 @@ public class OrderFacadeImpl implements OrderFacade {
     private final ProductService productService;
 
     @Override
-    public OrderDTO makeOrder(OrderSaveDTO orderSaveDTO) {
+    public OrderDTO addToShoppingCart(OrderSaveDTO orderSaveDTO) {
         User user = userService.getUser();
         Order order = Order
                 .builder()
-                .orderPositions(orderSaveDTO.getOrderPositions().stream().map(this::toEntity).collect(Collectors.toList()))
+                .orderPositions(orderSaveDTO.getOrderPositions().stream().map(this::toEntity).toList())
                 .totalSum(BigDecimal.valueOf(orderSaveDTO.getOrderPositions().stream().map(this::toTotalSum).reduce(Double::sum).orElse(0.0)))
                 .user(user)
                 .build();
         order.setUser(user);
+        order.setOrderStatus(OrderStatus.IN_SHOPPING_CARD);
+        return ModelMapperUtil.map(service.makeOrder(order), OrderDTO.class);
+    }
+
+    @Override
+    public OrderDTO makeOrder(ObjectId id) {
+        Order order = service.getOrderById(id);
         order.setCreatedAt(LocalDateTime.now());
+        order.setOrderStatus(OrderStatus.ORDERED);
         return ModelMapperUtil.map(service.makeOrder(order), OrderDTO.class);
     }
 
