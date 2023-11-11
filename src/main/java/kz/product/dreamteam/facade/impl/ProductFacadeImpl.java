@@ -81,7 +81,7 @@ public class ProductFacadeImpl implements ProductFacade {
     }
 
     @Override
-    public Collection<ProductDTO> search(SearchRequest<ProductFilterRequest, ProductSortRequest> searchRequest) {
+    public Collection<ProductDTO> search(SearchRequest<FilterRequest, SortRequest> searchRequest) {
         return service.search(searchRequest)
                 .stream()
                 .map(x -> ModelMapperUtil.map(x, ProductDTO.class)).toList();

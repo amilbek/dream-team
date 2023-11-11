@@ -12,7 +12,7 @@ public class OrderDTO {
 
     private ObjectId id;
     private UserDTO user;
-    private List<ProductDTO> orderPositions;
+    private List<OrderPositionDTO> orderPositions;
     private BigDecimal totalSum;
     private LocalDateTime createdAt;
 }

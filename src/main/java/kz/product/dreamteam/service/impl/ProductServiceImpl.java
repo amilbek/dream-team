@@ -1,8 +1,8 @@
 package kz.product.dreamteam.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
-import kz.product.dreamteam.model.dto.request.ProductFilterRequest;
-import kz.product.dreamteam.model.dto.request.ProductSortRequest;
+import kz.product.dreamteam.model.dto.request.FilterRequest;
+import kz.product.dreamteam.model.dto.request.SortRequest;
 import kz.product.dreamteam.model.dto.request.SearchRequest;
 import kz.product.dreamteam.model.entity.Product;
 import kz.product.dreamteam.repository.ProductRepository;
@@ -53,8 +53,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<Product> search(SearchRequest<ProductFilterRequest, ProductSortRequest> searchRequest) {
-        ProductFilterRequest filter = searchRequest.getFilter();
+    public Page<Product> search(SearchRequest<FilterRequest, SortRequest> searchRequest) {
+        FilterRequest filter = searchRequest.getFilter();
         List<AggregationOperation> stages = new ArrayList<>();
         if (notNullOrEmptyStr(filter.getValue())) {
             Criteria regexCriteria = new Criteria().orOperator(

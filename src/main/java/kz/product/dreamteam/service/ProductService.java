@@ -1,7 +1,7 @@
 package kz.product.dreamteam.service;
 
-import kz.product.dreamteam.model.dto.request.ProductFilterRequest;
-import kz.product.dreamteam.model.dto.request.ProductSortRequest;
+import kz.product.dreamteam.model.dto.request.FilterRequest;
+import kz.product.dreamteam.model.dto.request.SortRequest;
 import kz.product.dreamteam.model.dto.request.SearchRequest;
 import kz.product.dreamteam.model.entity.Product;
 import org.bson.types.ObjectId;
@@ -18,7 +18,7 @@ public interface ProductService {
     Product getProduct(ObjectId id);
 
     @Transactional(readOnly = true)
-    Page<Product> search(SearchRequest<ProductFilterRequest, ProductSortRequest> searchRequest);
+    Page<Product> search(SearchRequest<FilterRequest, SortRequest> searchRequest);
 
     List<Product> getProductsByLikedUser(ObjectId userId);
 

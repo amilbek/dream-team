@@ -3,7 +3,7 @@ package kz.product.dreamteam.model.dto.request;
 import lombok.Data;
 
 @Data
-public class ProductSortRequest {
+public class SortRequest {
 
     private String sortOrder;
     private String sortBy;

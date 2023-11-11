@@ -4,6 +4,9 @@ import kz.product.dreamteam.facade.OrderFacade;
 import kz.product.dreamteam.model.dto.OrderDTO;
 import kz.product.dreamteam.model.dto.OrderPositionSaveDTO;
 import kz.product.dreamteam.model.dto.OrderSaveDTO;
+import kz.product.dreamteam.model.dto.request.FilterRequest;
+import kz.product.dreamteam.model.dto.request.SortRequest;
+import kz.product.dreamteam.model.dto.request.SearchRequest;
 import kz.product.dreamteam.model.entity.Order;
 import kz.product.dreamteam.model.entity.OrderPosition;
 import kz.product.dreamteam.model.entity.Product;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +54,14 @@ public class OrderFacadeImpl implements OrderFacade {
         return ModelMapperUtil.map(service.makeOrder(order), OrderDTO.class);
     }
 
+    @Override
+    public Collection<OrderDTO> search(SearchRequest<FilterRequest, SortRequest> request) {
+        User user = userService.getUser();
+        return service.search(request, user)
+                .stream()
+                .map(x -> ModelMapperUtil.map(x, OrderDTO.class)).toList();
+    }
+
     private OrderPosition toEntity(OrderPositionSaveDTO orderPositionSaveDTO) {
         Product product = productService.getProduct(orderPositionSaveDTO.getProductId());
         return OrderPosition
@@ -61,6 +73,6 @@ public class OrderFacadeImpl implements OrderFacade {
 
     private double toTotalSum(OrderPositionSaveDTO orderPositionSaveDTO) {
         Product product = productService.getProduct(orderPositionSaveDTO.getProductId());
-        return product.getPrice().doubleValue();
+        return product.getPrice().multiply(BigDecimal.valueOf(orderPositionSaveDTO.getCount())).doubleValue();
     }
 }

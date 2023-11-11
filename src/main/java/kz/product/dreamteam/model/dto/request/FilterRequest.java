@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-public class ProductFilterRequest {
+public class FilterRequest {
 
     String value;
 
@@ -29,4 +29,6 @@ public class ProductFilterRequest {
 
     BigDecimal sumStart;
     BigDecimal sumEnd;
+
+    String orderStatus;
 }

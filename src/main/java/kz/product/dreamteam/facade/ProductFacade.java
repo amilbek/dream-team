@@ -2,8 +2,8 @@ package kz.product.dreamteam.facade;
 
 import kz.product.dreamteam.model.dto.ProductDTO;
 import kz.product.dreamteam.model.dto.ProductSaveDTO;
-import kz.product.dreamteam.model.dto.request.ProductFilterRequest;
-import kz.product.dreamteam.model.dto.request.ProductSortRequest;
+import kz.product.dreamteam.model.dto.request.FilterRequest;
+import kz.product.dreamteam.model.dto.request.SortRequest;
 import kz.product.dreamteam.model.dto.request.SearchRequest;
 import org.bson.types.ObjectId;
 
@@ -21,7 +21,7 @@ public interface ProductFacade {
 
     ProductDTO likeProduct(ObjectId id);
 
-    Collection<ProductDTO> search(SearchRequest<ProductFilterRequest, ProductSortRequest> request);
+    Collection<ProductDTO> search(SearchRequest<FilterRequest, SortRequest> request);
 
     Collection<ProductDTO> recommendedList();
 }
