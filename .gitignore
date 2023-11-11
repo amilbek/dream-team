@@ -33,4 +33,3 @@ application.properties
 ### VS Code ###
 .vscode/
 /temp/
-/cron.log

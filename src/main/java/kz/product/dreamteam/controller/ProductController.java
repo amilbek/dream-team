@@ -3,12 +3,18 @@ package kz.product.dreamteam.controller;
 import kz.product.dreamteam.facade.ProductFacade;
 import kz.product.dreamteam.model.dto.ProductDTO;
 import kz.product.dreamteam.model.dto.ProductSaveDTO;
+import kz.product.dreamteam.model.dto.request.ProductFilterRequest;
+import kz.product.dreamteam.model.dto.request.ProductSortRequest;
+import kz.product.dreamteam.model.dto.request.SearchRequest;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,5 +51,10 @@ public class ProductController {
     @DeleteMapping("/like/{id}")
     public ResponseEntity<ProductDTO> like(@PathVariable("id") ObjectId id) {
         return ResponseEntity.ok(facade.likeProduct(id));
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<Collection<ProductDTO>> search(@RequestBody SearchRequest<ProductFilterRequest, ProductSortRequest> request) {
+        return ResponseEntity.ok(facade.search(request));
     }
 }
