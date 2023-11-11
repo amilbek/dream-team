@@ -6,6 +6,7 @@ import kz.product.dreamteam.model.dto.request.SearchRequest;
 import kz.product.dreamteam.model.dto.request.SortRequest;
 import kz.product.dreamteam.model.entity.Order;
 import kz.product.dreamteam.model.entity.User;
+import kz.product.dreamteam.model.entity.enums.Role;
 import kz.product.dreamteam.repository.OrderRepository;
 import kz.product.dreamteam.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -62,7 +63,9 @@ public class OrderServiceImpl implements OrderService {
         FilterRequest filter = searchRequest.getFilter();
         List<AggregationOperation> stages = new ArrayList<>();
 
-        stages.add(Aggregation.match(Criteria.where("user").is(user)));
+        if (user.getRole().equals(Role.USER)) {
+            stages.add(Aggregation.match(Criteria.where("user").is(user)));
+        }
 
         if (notNullOrEmptyStr(filter.getValue())) {
             stages.add(Aggregation.lookup("orderPositions", "_id", "order._id", "positions"));

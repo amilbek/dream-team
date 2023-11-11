@@ -33,13 +33,13 @@ public class ProductController {
         return ResponseEntity.ok(facade.getProduct(id));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole(ADMIN)")
     @PutMapping("/edit/{id}")
     public ResponseEntity<ProductDTO> edit(@PathVariable("id") ObjectId id, @RequestBody ProductSaveDTO productSaveDTO) {
         return ResponseEntity.ok(facade.editProduct(id, productSaveDTO));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole(ADMIN)")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Object> delete(@PathVariable("id") ObjectId id) {
         facade.deleteProduct(id);
