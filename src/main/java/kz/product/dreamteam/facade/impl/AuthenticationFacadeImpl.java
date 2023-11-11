@@ -8,7 +8,6 @@ import kz.product.dreamteam.model.dto.request.SignUpRequest;
 import kz.product.dreamteam.model.dto.UserDTO;
 import kz.product.dreamteam.model.entity.User;
 import kz.product.dreamteam.model.entity.enums.Role;
-import kz.product.dreamteam.redis.UserRedisService;
 import kz.product.dreamteam.service.JwtService;
 import kz.product.dreamteam.service.UserService;
 import kz.product.dreamteam.utils.ModelMapperUtil;
@@ -29,7 +28,6 @@ import static kz.product.dreamteam.utils.UserSignUpValidation.*;
 public class AuthenticationFacadeImpl implements AuthenticationFacade {
 
     private final UserService service;
-    private final UserRedisService redisService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtService jwtService;
 
@@ -51,7 +49,6 @@ public class AuthenticationFacadeImpl implements AuthenticationFacade {
     @Override
     public JwtAuthenticationResponse signInUser(SignInRequest signInRequest) {
         User user = service.getUserByEmail(signInRequest.getEmail());
-        redisService.addUserToCache(user);
         if (!bCryptPasswordEncoder.matches(signInRequest.getPassword(), user.getPassword())) {
             throw new CustomException(String.valueOf(INVALID_USER_CREDENTIALS));
         }

@@ -8,6 +8,9 @@ import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 public interface ProductService {
 
     Product save(Product product);
@@ -16,4 +19,14 @@ public interface ProductService {
 
     @Transactional(readOnly = true)
     Page<Product> search(SearchRequest<ProductFilterRequest, ProductSortRequest> searchRequest);
+
+    List<Product> getProductsByLikedUser(ObjectId userId);
+
+    List<Product> getProductsByViewedUser(ObjectId userId);
+
+    List<Product> getAllProducts();
+
+    List<Product> getAllByCategoriesIn(List<String> categories);
+
+    List<Product> getAllByPricesBetween(BigDecimal min, BigDecimal max);
 }

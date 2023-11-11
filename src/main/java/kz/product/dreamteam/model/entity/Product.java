@@ -2,6 +2,7 @@ package kz.product.dreamteam.model.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +12,7 @@ import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @Entity
@@ -30,4 +32,10 @@ public class Product {
     private Boolean isDeleted;
     private Integer views;
     private Integer likes;
+
+    @OneToMany
+    private List<User> likedUsers;
+
+    @OneToMany
+    private List<User> viewedUsers;
 }

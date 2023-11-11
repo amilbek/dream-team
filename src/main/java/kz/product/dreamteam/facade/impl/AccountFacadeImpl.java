@@ -7,7 +7,6 @@ import kz.product.dreamteam.facade.AccountFacade;
 import kz.product.dreamteam.model.dto.UserDTO;
 import kz.product.dreamteam.model.dto.UserUpdateDTO;
 import kz.product.dreamteam.model.entity.User;
-import kz.product.dreamteam.redis.UserRedisService;
 import kz.product.dreamteam.service.UserService;
 import kz.product.dreamteam.utils.ModelMapperUtil;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,6 @@ import static kz.product.dreamteam.utils.UserSignUpValidation.*;
 public class AccountFacadeImpl implements AccountFacade {
 
     private final UserService service;
-    private final UserRedisService redisService;
 
     @Override
     public UserDTO getUserAccount() {
@@ -42,7 +40,6 @@ public class AccountFacadeImpl implements AccountFacade {
         user.setLastName(userUpdateDTO.getLastName());
         user.setEmail(userUpdateDTO.getEmail());
         user.setBirthDate(userUpdateDTO.getBirthDate());
-        redisService.addUserToCache(user);
         return ModelMapperUtil.map(service.save(user), UserDTO.class);
     }
 
@@ -50,7 +47,6 @@ public class AccountFacadeImpl implements AccountFacade {
     public void deleteUserAccount() {
         User user = service.getUser();
         user.setIsDeleted(true);
-        redisService.addUserToCache(user);
         service.save(user);
     }
 
@@ -61,7 +57,6 @@ public class AccountFacadeImpl implements AccountFacade {
         SecurityContextLogoutHandler ctxLogOut = new SecurityContextLogoutHandler();
         if (user != null) {
             ctxLogOut.logout(request, response, auth);
-            redisService.deleteUserFromCache(user);
         }
     }
 

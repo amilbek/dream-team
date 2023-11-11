@@ -6,7 +6,6 @@ import kz.product.dreamteam.model.dto.request.ProductFilterRequest;
 import kz.product.dreamteam.model.dto.request.ProductSortRequest;
 import kz.product.dreamteam.model.dto.request.SearchRequest;
 import org.bson.types.ObjectId;
-import org.springframework.data.domain.Page;
 
 import java.util.Collection;
 
@@ -23,4 +22,6 @@ public interface ProductFacade {
     ProductDTO likeProduct(ObjectId id);
 
     Collection<ProductDTO> search(SearchRequest<ProductFilterRequest, ProductSortRequest> request);
+
+    Collection<ProductDTO> recommendedList();
 }

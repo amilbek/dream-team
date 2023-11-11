@@ -20,6 +20,7 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,12 @@ import static kz.product.dreamteam.utils.Util.notNullOrEmptyStr;
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
+
+    private static final String COLLECTION_NAME = "products";
+    private static final String NAME_FIELD = "name";
+    private static final String DESCRIPTION_FIELD = "description";
+    private static final String CATEGORY_FIELD = "category";
+    private static final String PRICE_FIELD = "price";
 
     private final ProductRepository repository;
     private final MongoTemplate mongoTemplate;
@@ -51,23 +58,23 @@ public class ProductServiceImpl implements ProductService {
         List<AggregationOperation> stages = new ArrayList<>();
         if (notNullOrEmptyStr(filter.getValue())) {
             Criteria regexCriteria = new Criteria().orOperator(
-                    Criteria.where("name").regex(filter.getValue(), "i"),
-                    Criteria.where("description").regex(filter.getValue(), "i")
+                    Criteria.where(NAME_FIELD).regex(filter.getValue(), "i"),
+                    Criteria.where(DESCRIPTION_FIELD).regex(filter.getValue(), "i")
             );
             stages.add(Aggregation.match(regexCriteria));
         }
         if (notNullOrEmptyStr(filter.getCategory())) {
-            stages.add(Aggregation.match(Criteria.where("category").is(filter.getCategory())));
+            stages.add(Aggregation.match(Criteria.where(CATEGORY_FIELD).is(filter.getCategory())));
         }
 
         if (nonNull(filter.getSumStart()) && nonNull(filter.getSumEnd())) {
-            stages.add(Aggregation.match(Criteria.where("price").gte(filter.getSumStart()).lte(filter.getSumEnd())));
+            stages.add(Aggregation.match(Criteria.where(PRICE_FIELD).gte(filter.getSumStart()).lte(filter.getSumEnd())));
         }
         if (nonNull(filter.getSumStart()) && isNull(filter.getSumEnd())) {
-            stages.add(Aggregation.match(Criteria.where("price").gte(filter.getSumStart())));
+            stages.add(Aggregation.match(Criteria.where(PRICE_FIELD).gte(filter.getSumStart())));
         }
         if (isNull(filter.getSumStart()) && nonNull(filter.getSumEnd())) {
-            stages.add(Aggregation.match(Criteria.where("price").lte(filter.getSumEnd())));
+            stages.add(Aggregation.match(Criteria.where(PRICE_FIELD).lte(filter.getSumEnd())));
         }
 
         Sort.Direction sortDirection = Sort.Direction.fromString(searchRequest.getSorting().getSortOrder());
@@ -78,8 +85,34 @@ public class ProductServiceImpl implements ProductService {
         stages.add(Aggregation.limit(pageRequest.getPageSize()));
 
         Aggregation aggregation = Aggregation.newAggregation(stages);
-        AggregationResults<Product> result = mongoTemplate.aggregate(aggregation, "products", Product.class);
+        AggregationResults<Product> result = mongoTemplate.aggregate(aggregation, COLLECTION_NAME, Product.class);
         List<Product> products = result.getMappedResults();
         return new PageImpl<>(products, pageRequest, products.size());
+    }
+
+
+    @Override
+    public List<Product> getProductsByLikedUser(ObjectId userId) {
+        return repository.findByLikedUsersId(userId);
+    }
+
+    @Override
+    public List<Product> getProductsByViewedUser(ObjectId userId) {
+        return repository.findByViewedUsersId(userId);
+    }
+
+    @Override
+    public List<Product> getAllProducts() {
+        return repository.findAll();
+    }
+
+    @Override
+    public List<Product> getAllByCategoriesIn(List<String> categories) {
+        return repository.findByCategoryIn(categories);
+    }
+
+    @Override
+    public List<Product> getAllByPricesBetween(BigDecimal min, BigDecimal max) {
+        return repository.findByPriceBetween(min, max);
     }
 }

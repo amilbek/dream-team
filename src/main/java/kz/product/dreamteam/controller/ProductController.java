@@ -8,7 +8,6 @@ import kz.product.dreamteam.model.dto.request.ProductSortRequest;
 import kz.product.dreamteam.model.dto.request.SearchRequest;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -56,5 +55,10 @@ public class ProductController {
     @PostMapping("/search")
     public ResponseEntity<Collection<ProductDTO>> search(@RequestBody SearchRequest<ProductFilterRequest, ProductSortRequest> request) {
         return ResponseEntity.ok(facade.search(request));
+    }
+
+    @PostMapping("/recommendation")
+    public ResponseEntity<Collection<ProductDTO>> recommendation() {
+        return ResponseEntity.ok(facade.recommendedList());
     }
 }

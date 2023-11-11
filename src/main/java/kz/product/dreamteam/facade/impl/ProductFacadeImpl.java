@@ -4,20 +4,21 @@ import kz.product.dreamteam.facade.ProductFacade;
 import kz.product.dreamteam.model.dto.ProductDTO;
 import kz.product.dreamteam.model.dto.ProductSaveDTO;
 import kz.product.dreamteam.model.dto.request.*;
+import kz.product.dreamteam.model.entity.OrderPosition;
 import kz.product.dreamteam.model.entity.Product;
 import kz.product.dreamteam.model.entity.User;
 import kz.product.dreamteam.model.entity.enums.Role;
+import kz.product.dreamteam.service.OrderService;
 import kz.product.dreamteam.service.ProductService;
 import kz.product.dreamteam.service.UserService;
 import kz.product.dreamteam.utils.ModelMapperUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
+import java.math.BigDecimal;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -26,6 +27,7 @@ public class ProductFacadeImpl implements ProductFacade {
 
     private final ProductService service;
     private final UserService userService;
+    private final OrderService orderService;
 
     @Override
     public ProductDTO saveProduct(ProductSaveDTO productSaveDTO) {
@@ -42,6 +44,7 @@ public class ProductFacadeImpl implements ProductFacade {
         Product product = service.getProduct(id);
         if (user.getRole().equals(Role.USER)) {
             product.setViews(product.getViews() + 1);
+            product.setViewedUsers(Collections.singletonList(user));
         }
         Product savedProduct = service.save(product);
         return ModelMapperUtil.map(savedProduct, ProductDTO.class);
@@ -71,6 +74,7 @@ public class ProductFacadeImpl implements ProductFacade {
         Product product = service.getProduct(id);
         if (user.getRole().equals(Role.USER)) {
             product.setLikes(product.getLikes() + 1);
+            product.setLikedUsers(Collections.singletonList(user));
         }
         Product savedProduct = service.save(product);
         return ModelMapperUtil.map(savedProduct, ProductDTO.class);
@@ -80,7 +84,57 @@ public class ProductFacadeImpl implements ProductFacade {
     public Collection<ProductDTO> search(SearchRequest<ProductFilterRequest, ProductSortRequest> searchRequest) {
         return service.search(searchRequest)
                 .stream()
+                .map(x -> ModelMapperUtil.map(x, ProductDTO.class)).toList();
+    }
+
+    @Override
+    public Collection<ProductDTO> recommendedList() {
+        User user = userService.getUser();
+        List<Product> orderProductsByUser = orderService.getOrdersByUser(user.getId())
+                .stream()
+                .flatMap(order -> order.getOrderPositions().stream())
+                .map(OrderPosition::getProduct).toList();
+        List<String> productCategories = orderProductsByUser
+                .stream()
+                .map(Product::getCategory)
+                .distinct().toList();
+        BigDecimal maxProductPrice = orderProductsByUser
+                .stream()
+                .map(Product::getPrice)
+                .max(BigDecimal::compareTo).orElse(BigDecimal.valueOf(0));
+        BigDecimal minProductPrice = orderProductsByUser
+                .stream()
+                .map(Product::getPrice)
+                .min(BigDecimal::compareTo).orElse(BigDecimal.valueOf(0));
+        List<Product> recommendedListByCategories = service.getAllByCategoriesIn(productCategories);
+        List<Product> recommendedListByPrice = service.getAllByPricesBetween(minProductPrice, maxProductPrice);
+        List<Product> likedProductsByUser = service.getProductsByLikedUser(user.getId());
+        List<Product> viewedProductsByUser = service.getProductsByViewedUser(user.getId());
+        List<Product> allSortedLikedProducts = service.getAllProducts()
+                .stream()
+                .sorted(Comparator.comparing(Product::getLikes).reversed()).toList();
+        List<Product> allSortedViewedProducts = service.getAllProducts()
+                .stream()
+                .sorted(Comparator.comparing(Product::getLikes).reversed()).toList();
+        List<Product> recommendedList = new ArrayList<>(recommendedListByCategories);
+
+        checkAndAddToRecommendedList(recommendedListByPrice, recommendedList);
+        checkAndAddToRecommendedList(likedProductsByUser, recommendedList);
+        checkAndAddToRecommendedList(viewedProductsByUser, recommendedList);
+        checkAndAddToRecommendedList(allSortedLikedProducts, recommendedList);
+        checkAndAddToRecommendedList(allSortedViewedProducts, recommendedList);
+
+        return recommendedList
+                .stream()
                 .map(x -> ModelMapperUtil.map(x, ProductDTO.class))
-                .collect(Collectors.toList());
+                .toList();
+    }
+
+    private void checkAndAddToRecommendedList(List<Product> products, List<Product> recommends) {
+        for (Product product : products) {
+            if (!recommends.contains(product)) {
+                recommends.add(product);
+            }
+        }
     }
 }
