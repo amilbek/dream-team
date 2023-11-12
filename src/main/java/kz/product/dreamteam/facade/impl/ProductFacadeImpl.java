@@ -109,7 +109,19 @@ public class ProductFacadeImpl implements ProductFacade {
         List<Product> recommendedListByCategories = service.getAllByCategoriesIn(productCategories);
         List<Product> recommendedListByPrice = service.getAllByPricesBetween(minProductPrice, maxProductPrice);
         List<Product> likedProductsByUser = service.getProductsByLikedUser(user.getId());
+        List<String> likedProductCategoriesByUser = likedProductsByUser
+                .stream()
+                .map(Product::getCategory)
+                .distinct()
+                .toList();
+        List<Product> recommendedListByLikedProductCategories = service.getAllByCategoriesIn(likedProductCategoriesByUser);
         List<Product> viewedProductsByUser = service.getProductsByViewedUser(user.getId());
+        List<String> viewedProductCategoriesByUser = viewedProductsByUser
+                .stream()
+                .map(Product::getCategory)
+                .distinct()
+                .toList();
+        List<Product> recommendedListByViewedProductCategories = service.getAllByCategoriesIn(viewedProductCategoriesByUser);
         List<Product> allSortedLikedProducts = service.getAllProducts()
                 .stream()
                 .sorted(Comparator.comparing(Product::getLikes).reversed()).toList();
@@ -119,6 +131,8 @@ public class ProductFacadeImpl implements ProductFacade {
         List<Product> recommendedList = new ArrayList<>(recommendedListByCategories);
 
         checkAndAddToRecommendedList(recommendedListByPrice, recommendedList);
+        checkAndAddToRecommendedList(recommendedListByLikedProductCategories, recommendedList);
+        checkAndAddToRecommendedList(recommendedListByViewedProductCategories, recommendedList);
         checkAndAddToRecommendedList(likedProductsByUser, recommendedList);
         checkAndAddToRecommendedList(viewedProductsByUser, recommendedList);
         checkAndAddToRecommendedList(allSortedLikedProducts, recommendedList);
