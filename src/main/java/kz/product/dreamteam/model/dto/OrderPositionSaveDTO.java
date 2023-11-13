@@ -7,5 +7,4 @@ import org.bson.types.ObjectId;
 public class OrderPositionSaveDTO {
 
     private ObjectId productId;
-    private Integer count;
 }

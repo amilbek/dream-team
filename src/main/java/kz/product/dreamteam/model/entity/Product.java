@@ -1,6 +1,7 @@
 package kz.product.dreamteam.model.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
@@ -33,9 +34,9 @@ public class Product {
     private Integer views;
     private Integer likes;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     private List<User> likedUsers;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     private List<User> viewedUsers;
 }

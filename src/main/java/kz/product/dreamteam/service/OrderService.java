@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface OrderService {
 
-    Order makeOrder(Order order);
+    Order save(Order order);
 
     Order getOrderById(ObjectId id);
 
@@ -21,4 +21,6 @@ public interface OrderService {
 
     @Transactional(readOnly = true)
     Page<Order> search(SearchRequest<FilterRequest, SortRequest> searchRequest, User user);
+
+    Order getOrderInShoppingCart(ObjectId userId);
 }

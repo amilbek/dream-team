@@ -53,7 +53,14 @@ public class AuthenticationFacadeImpl implements AuthenticationFacade {
             throw new CustomException(String.valueOf(INVALID_USER_CREDENTIALS));
         }
         var jwt = jwtService.generateToken(user);
-        return JwtAuthenticationResponse.builder().token(jwt).build();
+        return JwtAuthenticationResponse
+                .builder()
+                .token(jwt)
+                .email(user.getEmail())
+                .userRole(user.getRole())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .build();
     }
 
     private void checkUserValidations(SignUpRequest signUpRequest) {

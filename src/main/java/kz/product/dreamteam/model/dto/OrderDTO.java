@@ -1,5 +1,6 @@
 package kz.product.dreamteam.model.dto;
 
+import kz.product.dreamteam.model.entity.enums.OrderStatus;
 import lombok.Data;
 import org.bson.types.ObjectId;
 
@@ -15,4 +16,5 @@ public class OrderDTO {
     private List<OrderPositionDTO> orderPositions;
     private BigDecimal totalSum;
     private LocalDateTime createdAt;
+    private OrderStatus orderStatus;
 }

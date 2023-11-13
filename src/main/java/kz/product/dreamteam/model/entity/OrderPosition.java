@@ -21,10 +21,7 @@ public class OrderPosition {
     @Id
     private ObjectId id;
 
-    @ManyToOne
-    private Order order;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
 
     private Integer count;

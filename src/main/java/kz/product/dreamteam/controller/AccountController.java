@@ -7,7 +7,6 @@ import kz.product.dreamteam.model.dto.UserDTO;
 import kz.product.dreamteam.model.dto.UserUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,13 +25,11 @@ public class AccountController {
         return ResponseEntity.ok(accountFacade.getUserAccount());
     }
 
-    @PreAuthorize("hasRole(USER)")
     @PutMapping("/edit-user")
     public ResponseEntity<UserDTO> updateUserAccount(@Validated @RequestBody UserUpdateDTO userUpdateDTO) {
         return ResponseEntity.ok(accountFacade.updateUserAccount(userUpdateDTO));
     }
 
-    @PreAuthorize("hasRole(USER)")
     @DeleteMapping("/delete-user")
     public ResponseEntity<Object> deleteUserAccount() {
         accountFacade.deleteUserAccount();

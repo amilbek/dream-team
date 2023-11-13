@@ -27,7 +27,7 @@ public class Order {
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     private List<OrderPosition> orderPositions;
     private BigDecimal totalSum;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private User user;
     private OrderStatus orderStatus;
     private LocalDateTime createdAt;

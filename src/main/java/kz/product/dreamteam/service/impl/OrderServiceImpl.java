@@ -27,6 +27,7 @@ import java.util.List;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static kz.product.dreamteam.model.entity.enums.OrderStatus.IN_SHOPPING_CART;
 import static kz.product.dreamteam.utils.Util.notNullOrEmptyStr;
 
 @Service
@@ -43,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
 
     //TODO: saving order position
     @Override
-    public Order makeOrder(Order order) {
+    public Order save(Order order) {
         return repository.save(order);
     }
 
@@ -122,5 +123,11 @@ public class OrderServiceImpl implements OrderService {
         AggregationResults<Order> result = mongoTemplate.aggregate(aggregation, COLLECTION_NAME, Order.class);
         List<Order> orders = result.getMappedResults();
         return new PageImpl<>(orders, pageRequest, orders.size());
+    }
+
+    @Override
+    public Order getOrderInShoppingCart(ObjectId userId) {
+        return repository.findByUserIdAndOrderStatus(userId, IN_SHOPPING_CART)
+                .orElse(null);
     }
 }
