@@ -42,7 +42,6 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository repository;
     private final MongoTemplate mongoTemplate;
 
-    //TODO: saving order position
     @Override
     public Order save(Order order) {
         return repository.save(order);
