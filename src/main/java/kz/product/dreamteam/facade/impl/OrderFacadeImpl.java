@@ -25,8 +25,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import static java.util.Objects.isNull;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -40,69 +39,63 @@ public class OrderFacadeImpl implements OrderFacade {
     @Override
     public OrderDTO addToShoppingCart(OrderPositionSaveDTO orderPositionSaveDTO) {
         User user = userService.getUser();
-        Order order = service.getOrderInShoppingCart(user.getId());
+        Order shoppingCart = service.getOrderInShoppingCart(user.getId());
         Product product = productService.getProduct(orderPositionSaveDTO.getProductId());
-        if (isNull(order)) {
-            //creating new shopping cart
-            order = new Order();
-            OrderPosition orderPosition = OrderPosition
-                    .builder()
-                    .product(product)
-                    .count(1)
-                    .build();
-            List<OrderPosition> orderPositions = new ArrayList<>();
-            orderPositions.add(orderPosition);
-            order.setOrderPositions(orderPositions);
-            order.setUser(user);
-            order.setOrderStatus(OrderStatus.IN_SHOPPING_CART);
-            order.setTotalSum(product.getPrice());
-            return ModelMapperUtil.map(service.save(order), OrderDTO.class);
-        }
-        //incrementing existing product
-        for (OrderPosition orderPosition : order.getOrderPositions()) {
-            log.info("Order position product: {}", orderPosition.getProduct());
-            log.info("Product: {}", product);
-            if (orderPosition.getProduct().equals(product)) {
-                int count = orderPosition.getCount() + 1;
-                orderPosition.setCount(count);
-                order.setTotalSum(product.getPrice().multiply(BigDecimal.valueOf(count)));
-                return ModelMapperUtil.map(service.save(order), OrderDTO.class);
+        if (shoppingCart == null) {
+            // Case 1: If user has no shopping cart, create a new one
+            shoppingCart = createNewShoppingCart(user, product);
+        } else {
+            // Case 2: Check if the product is already in the shopping cart
+            Optional<OrderPosition> existingPosition = findOrderPositionByProduct(shoppingCart, product);
+
+            if (existingPosition.isPresent()) {
+                // Case 2: If product is already in the shopping cart, increment the count by one
+                existingPosition.get().setCount(existingPosition.get().getCount() + 1);
+            } else {
+                // Case 3: If product is not in the shopping cart, add a new position
+                OrderPosition newOrderPosition = OrderPosition.builder()
+                        .product(product)
+                        .count(1)
+                        .build();
+                shoppingCart.getOrderPositions().add(newOrderPosition);
             }
         }
-        //adding new product
-        OrderPosition orderPosition = OrderPosition
-                .builder()
-                .product(product)
-                .count(1)
-                .build();
-        List<OrderPosition> orderPositions = order.getOrderPositions();
-        orderPositions.add(orderPosition);
-        order.setOrderPositions(orderPositions);
-        BigDecimal totalSum = BigDecimal.valueOf(0.0);
-        for (OrderPosition orderPosition1 : orderPositions) {
-            totalSum = totalSum.add(orderPosition1.getProduct().getPrice().multiply(BigDecimal.valueOf(orderPosition1.getCount())));
-        }
-        order.setTotalSum(totalSum);
-        return ModelMapperUtil.map(service.save(order), OrderDTO.class);
+        updateTotalSum(shoppingCart);
+        return ModelMapperUtil.map(service.save(shoppingCart), OrderDTO.class);
     }
 
     @Override
     public OrderDTO removeFromShoppingCart(OrderPositionSaveDTO orderPositionSaveDTO) {
         User user = userService.getUser();
-        Order order = service.getOrderInShoppingCart(user.getId());
+        Order shoppingCart = service.getOrderInShoppingCart(user.getId());
         Product product = productService.getProduct(orderPositionSaveDTO.getProductId());
 
-        //decrementing existing product
-        for (OrderPosition orderPosition : order.getOrderPositions()) {
-            log.info("Order position product: {}", orderPosition.getProduct());
-            log.info("Product: {}", product);
-            if (orderPosition.getProduct().equals(product)) {
-                int count = orderPosition.getCount() - 1;
-                orderPosition.setCount(count);
-                order.setTotalSum(product.getPrice().multiply(BigDecimal.valueOf(count)));
-                return ModelMapperUtil.map(service.save(order), OrderDTO.class);
+        if (shoppingCart != null) {
+            // Check if the product is in the shopping cart
+            Optional<OrderPosition> existingPosition = findOrderPositionByProduct(shoppingCart, product);
+
+            if (existingPosition.isPresent()) {
+                // If the count is greater than 1, decrement by one
+                if (existingPosition.get().getCount() > 1) {
+                    existingPosition.get().setCount(existingPosition.get().getCount() - 1);
+                } else {
+                    // If it is the last product, remove it from the shopping cart
+                    shoppingCart.getOrderPositions().remove(existingPosition.get());
+
+                    // If there are no other products, delete the user's shopping cart
+                    if (shoppingCart.getOrderPositions().isEmpty()) {
+                        service.remove(shoppingCart);
+                        return null; // Shopping cart is deleted, return null or handle as needed
+                    }
+                }
+
+                // Update total sum and save the shopping cart
+                updateTotalSum(shoppingCart);
+                return ModelMapperUtil.map(service.save(shoppingCart), OrderDTO.class);
             }
         }
+
+        // If the product is not in the shopping cart, return null or handle as needed
         return null;
     }
 
@@ -128,17 +121,31 @@ public class OrderFacadeImpl implements OrderFacade {
         return ModelMapperUtil.map(service.getOrderInShoppingCart(user.getId()), OrderDTO.class);
     }
 
-//    private OrderPosition toEntity(OrderPositionSaveDTO orderPositionSaveDTO) {
-//        Product product = productService.getProduct(orderPositionSaveDTO.getProductId());
-//        return OrderPosition
-//                .builder()
-//                .product(product)
-//                .count(orderPositionSaveDTO.getCount())
-//                .build();
-//    }
+    private Order createNewShoppingCart(User user, Product product) {
+        Order order = new Order();
+        OrderPosition orderPosition = OrderPosition.builder()
+                .product(product)
+                .count(1)
+                .build();
+        List<OrderPosition> orderPositions = new ArrayList<>();
+        orderPositions.add(orderPosition);
+        order.setOrderPositions(orderPositions);
+        order.setUser(user);
+        order.setOrderStatus(OrderStatus.IN_SHOPPING_CART);
+        order.setTotalSum(product.getPrice());
+        return order;
+    }
 
-//    private double toTotalSum(OrderPositionSaveDTO orderPositionSaveDTO) {
-//        Product product = productService.getProduct(orderPositionSaveDTO.getProductId());
-//        return product.getPrice().multiply(BigDecimal.valueOf(orderPositionSaveDTO.getCount())).doubleValue();
-//    }
+    private Optional<OrderPosition> findOrderPositionByProduct(Order shoppingCart, Product product) {
+        return shoppingCart.getOrderPositions().stream()
+                .filter(position -> position.getProduct().equals(product))
+                .findFirst();
+    }
+
+    private void updateTotalSum(Order shoppingCart) {
+        BigDecimal totalSum = shoppingCart.getOrderPositions().stream()
+                .map(position -> position.getProduct().getPrice().multiply(BigDecimal.valueOf(position.getCount())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        shoppingCart.setTotalSum(totalSum);
+    }
 }

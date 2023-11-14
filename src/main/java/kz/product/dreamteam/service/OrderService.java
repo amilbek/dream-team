@@ -15,6 +15,8 @@ public interface OrderService {
 
     Order save(Order order);
 
+    void remove(Order order);
+
     Order getOrderById(ObjectId id);
 
     List<Order> getOrdersByUser(ObjectId userId);

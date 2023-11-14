@@ -21,8 +21,14 @@ public class OrderController {
 
 
     @PostMapping("/add-to-shopping-cart")
-    public ResponseEntity<OrderDTO> addToShoppingCard(@RequestBody OrderPositionSaveDTO orderPositionSaveDTO) {
+    public ResponseEntity<OrderDTO> addToShoppingCart(@RequestBody OrderPositionSaveDTO orderPositionSaveDTO) {
         return ResponseEntity.ok(facade.addToShoppingCart(orderPositionSaveDTO));
+    }
+
+
+    @PostMapping("/remove-from-shopping-cart")
+    public ResponseEntity<OrderDTO> removeFromShoppingCart(@RequestBody OrderPositionSaveDTO orderPositionSaveDTO) {
+        return ResponseEntity.ok(facade.removeFromShoppingCart(orderPositionSaveDTO));
     }
 
     @PostMapping("/make-order/{id}")
