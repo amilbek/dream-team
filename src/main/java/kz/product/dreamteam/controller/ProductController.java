@@ -42,7 +42,7 @@ public class ProductController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("/like/{id}")
+    @PostMapping("/like/{id}")
     public ResponseEntity<ProductDTO> like(@PathVariable("id") ObjectId id) {
         return ResponseEntity.ok(facade.likeProduct(id));
     }
