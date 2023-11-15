@@ -34,7 +34,7 @@ public class ProductFacadeImpl implements ProductFacade {
         Product product = ModelMapperUtil.map(productSaveDTO, Product.class);
         product.setLikes(0);
         product.setViews(0);
-        product.setIsDeleted(false);
+        product.setIsDeleted(true);
         return ModelMapperUtil.map(service.save(product), ProductDTO.class);
     }
 
