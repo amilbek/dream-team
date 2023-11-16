@@ -1,8 +1,7 @@
 package kz.product.dreamteam.model.dto;
 
 import lombok.Data;
-
-import java.math.BigDecimal;
+import org.bson.types.Decimal128;
 
 @Data
 public class ProductDTO {
@@ -11,7 +10,7 @@ public class ProductDTO {
     private String name;
     private String description;
     private String category;
-    private BigDecimal price;
+    private Decimal128 price;
     private Boolean isDeleted;
     private Integer views;
     private Integer likes;

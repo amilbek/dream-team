@@ -17,6 +17,7 @@ import kz.product.dreamteam.service.UserService;
 import kz.product.dreamteam.utils.ModelMapperUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.Decimal128;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
@@ -144,8 +145,8 @@ public class OrderFacadeImpl implements OrderFacade {
 
     private void updateTotalSum(Order shoppingCart) {
         BigDecimal totalSum = shoppingCart.getOrderPositions().stream()
-                .map(position -> position.getProduct().getPrice().multiply(BigDecimal.valueOf(position.getCount())))
+                .map(position -> position.getProduct().getPrice().bigDecimalValue().multiply(BigDecimal.valueOf(position.getCount())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        shoppingCart.setTotalSum(totalSum);
+        shoppingCart.setTotalSum(Decimal128.parse(totalSum.toString()));
     }
 }

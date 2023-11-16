@@ -8,11 +8,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bson.types.Decimal128;
 import org.bson.types.ObjectId;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -29,7 +29,7 @@ public class Product {
     private String name;
     private String description;
     private String category;
-    private BigDecimal price;
+    private Decimal128 price;
     private Boolean isDeleted;
     private Integer views;
     private Integer likes;

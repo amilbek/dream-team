@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bson.types.Decimal128;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -26,7 +27,7 @@ public class Order {
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     private List<OrderPosition> orderPositions;
-    private BigDecimal totalSum;
+    private Decimal128 totalSum;
     @OneToOne(fetch = FetchType.LAZY)
     private User user;
     private OrderStatus orderStatus;

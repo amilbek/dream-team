@@ -14,6 +14,7 @@ import kz.product.dreamteam.service.UserService;
 import kz.product.dreamteam.utils.ModelMapperUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.Decimal128;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
@@ -101,11 +102,11 @@ public class ProductFacadeImpl implements ProductFacade {
         BigDecimal maxProductPrice = orderProductsByUser
                 .stream()
                 .map(Product::getPrice)
-                .max(BigDecimal::compareTo).orElse(BigDecimal.valueOf(0));
+                .max(Decimal128::compareTo).orElse(Decimal128.parse("0.0")).bigDecimalValue();
         BigDecimal minProductPrice = orderProductsByUser
                 .stream()
                 .map(Product::getPrice)
-                .min(BigDecimal::compareTo).orElse(BigDecimal.valueOf(0));
+                .min(Decimal128::compareTo).orElse(Decimal128.parse("0.0")).bigDecimalValue();
         List<Product> recommendedListByCategories = service.getAllByCategoriesIn(productCategories);
         List<Product> recommendedListByPrice = service.getAllByPricesBetween(minProductPrice, maxProductPrice);
         List<Product> likedProductsByUser = service.getProductsByLikedUser(user.getId());

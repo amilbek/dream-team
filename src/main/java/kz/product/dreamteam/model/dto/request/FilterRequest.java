@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Data;
+import org.bson.types.Decimal128;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
@@ -27,8 +28,8 @@ public class FilterRequest {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     LocalDateTime createdAtEnd;
 
-    BigDecimal sumStart;
-    BigDecimal sumEnd;
+    Decimal128 sumStart;
+    Decimal128 sumEnd;
 
     String orderStatus;
 }
