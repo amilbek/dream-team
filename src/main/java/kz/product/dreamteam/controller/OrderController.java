@@ -45,4 +45,9 @@ public class OrderController {
     public ResponseEntity<OrderDTO> getMyShoppingCart() {
         return ResponseEntity.ok(facade.getMyShoppingCart());
     }
+
+    @GetMapping("/my-orders")
+    public ResponseEntity<OrderDTO> getMyOrders() {
+        return ResponseEntity.ok(facade.getMyOrders());
+    }
 }

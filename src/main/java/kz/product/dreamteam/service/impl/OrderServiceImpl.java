@@ -28,6 +28,7 @@ import java.util.List;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static kz.product.dreamteam.model.entity.enums.OrderStatus.IN_SHOPPING_CART;
+import static kz.product.dreamteam.model.entity.enums.OrderStatus.ORDERED;
 import static kz.product.dreamteam.utils.Util.notNullOrEmptyStr;
 
 @Service
@@ -132,6 +133,12 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order getOrderInShoppingCart(ObjectId userId) {
         return repository.findByUserIdAndOrderStatus(userId, IN_SHOPPING_CART)
+                .orElse(null);
+    }
+
+    @Override
+    public Order getMyOrders(ObjectId userId) {
+        return repository.findByUserIdAndOrderStatus(userId, ORDERED)
                 .orElse(null);
     }
 }

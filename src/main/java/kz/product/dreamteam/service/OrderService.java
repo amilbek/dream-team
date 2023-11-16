@@ -25,4 +25,6 @@ public interface OrderService {
     Page<Order> search(SearchRequest<FilterRequest, SortRequest> searchRequest, User user);
 
     Order getOrderInShoppingCart(ObjectId userId);
+
+    Order getMyOrders(ObjectId userId);
 }

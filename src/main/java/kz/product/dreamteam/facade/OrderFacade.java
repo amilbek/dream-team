@@ -18,4 +18,6 @@ public interface OrderFacade {
     Collection<OrderDTO> search(SearchRequest<FilterRequest, SortRequest> request);
 
     OrderDTO getMyShoppingCart();
+
+    OrderDTO getMyOrders();
 }

@@ -122,6 +122,12 @@ public class OrderFacadeImpl implements OrderFacade {
         return ModelMapperUtil.map(service.getOrderInShoppingCart(user.getId()), OrderDTO.class);
     }
 
+    @Override
+    public OrderDTO getMyOrders() {
+        User user = userService.getUser();
+        return ModelMapperUtil.map(service.getMyOrders(user.getId()), OrderDTO.class);
+    }
+
     private Order createNewShoppingCart(User user, Product product) {
         Order order = new Order();
         OrderPosition orderPosition = OrderPosition.builder()
