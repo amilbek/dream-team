@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.Decimal128;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -30,6 +31,8 @@ public class ProductFacadeImpl implements ProductFacade {
     private final UserService userService;
     private final OrderService orderService;
 
+
+    @Transactional
     @Override
     public ProductDTO saveProduct(ProductSaveDTO productSaveDTO) {
         Product product = ModelMapperUtil.map(productSaveDTO, Product.class);
